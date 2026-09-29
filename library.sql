@@ -767,3 +767,83 @@ HAVING COUNT(br.book_id) > (
         GROUP BY member_id
     ) AS x
 );
+
+
+
+SELECT
+    title,
+    price,
+    ROW_NUMBER() OVER (
+        ORDER BY price DESC
+    ) AS price_rank
+FROM Books;
+
+-- Display every book's title, price, and assign a unique row number based on price from highest to lowest.
+
+SELECT 
+      title,
+      price,
+      ROW_NUMBER() OVER (
+          ORDER BY price DESC
+	) AS Unique_row_number
+FROM Books;
+
+-- Display every book's title, category, and price. 
+-- Assign a unique row number based on price from highest to lowest. 
+-- If two books have the same price, sort those books alphabetically by title.
+
+    
+    SELECT
+    librarian_id,
+    borrow_id,
+    borrow_date,
+    ROW_NUMBER() OVER (
+        PARTITION BY librarian_id
+        ORDER BY borrow_date DESC
+    ) AS row_num
+FROM Borrow_Records;
+     
+-- For each member, assign a unique row number to their borrowed books based on borrow_date from oldest to newest.”
+-- member_id
+-- book_id
+-- borrow_date
+-- row_num
+
+SELECT 
+      member_id,
+      book_id,
+      borrow_date,
+      ROW_NUMBER() OVER (
+         PARTITION BY member_id
+         ORDER BY borrow_date ASC
+	) AS row_num
+FROM Borrow_Records;
+
+-- For each category, assign a unique row number to books based on their price from highest to lowest.
+
+SELECT 
+      category,
+      title,
+      price,
+      ROW_NUMBER() OVER(
+      PARTITION BY category
+      ORDER BY price DESC
+      ) AS row_num
+      
+FROM Books;
+
+-- For each book category, assign a unique row number to the books based on their price from lowest to highest.
+-- category
+-- title
+-- price
+-- row_num
+
+SELECT 
+     category,
+     title,
+     price,
+     ROW_NUMBER() OVER (
+        PARTITION BY category
+        ORDER BY price ASC
+	) AS row_num
+FROM Books;
