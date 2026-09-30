@@ -847,3 +847,102 @@ SELECT
         ORDER BY price ASC
 	) AS row_num
 FROM Books;
+
+
+-- For each librarian, their borrowing transactions ni borrow_date latest nunchi oldest varaku arrange chesi, unique row number assign cheyyali.
+-- librarian_id
+-- borrow_id
+-- borrow_date
+-- row_num
+
+SELECT
+	 librarian_id,
+     borrow_id,
+     borrow_date,
+     ROW_NUMBER() OVER(
+     PARTITION BY librarian_id
+     ORDER BY borrow_date DESC
+     ) AS row_num
+FROM Borrow_Records;
+
+-- Library lo prathi book ki, aa book enni saarlu borrow ayyindo based ga borrowing transactions ki sequence number assign cheyyali.
+
+-- Same book ki numbering 1 nunchi start avvali.
+-- book_id
+-- member_id
+-- borrow_date
+-- row_num
+
+SELECT 
+     book_id,
+     member_id,
+     borrow_date,
+     ROW_NUMBER() OVER (
+     PARTITION BY book_id
+     ORDER BY borrow_date DESC
+     ) AS row_num
+FROM Borrow_Records;
+-- For each category, books ni price highest nunchi lowest varaku arrange chesi, aa category lo row number assign cheyyali.
+-- category
+-- title
+-- price
+-- row_num
+
+SELECT 
+      category,
+      title,
+      price,
+      ROW_NUMBER() OVER(
+      PARTITION BY category
+      ORDER BY price DESC
+      ) AS row_num
+FROM books;
+
+-- Library lo prathi member tana borrowed books ni, borrow_date latest nunchi oldest varaku arrange chesi, row number assign cheyyali.
+-- member_id
+-- name
+-- book_id
+-- borrow_date
+-- row_num
+
+SELECT
+     m.member_id,
+     m.name,
+     br.book_id,
+     br.borrow_date,
+     ROW_NUMBER() OVER (
+     PARTITION BY m.member_id
+     ORDER BY br.borrow_date DESC
+     ) AS row_num
+FROM Members AS m
+JOIN Borrow_Records AS br
+ON m.member_id = br.member_id;
+
+-- Library lo prathi book ki, 
+-- aa book ni borrow chesina members ni latest borrowing nunchi oldest borrowing varaku arrange chesi row number assign cheyyali.
+-- book_id
+-- title
+-- member_id
+-- borrow_date
+-- row_num
+SELECT 
+      b.title,
+      br.book_id,
+      br.member_id,
+      br.borrow_id,
+      br.borrow_date,
+	  ROW_NUMBER() OVER (
+      PARTITION BY br.book_id
+      ORDER BY br.borrow_date DESC
+      ) AS row_num
+FROM Books AS b
+JOIN Borrow_Records AS br
+ON b.book_id = br.book_id;
+
+SELECT
+    title,
+    price,
+    RANK() OVER (
+        ORDER BY price DESC
+    ) AS price_rank
+FROM Books;
